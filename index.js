@@ -1,28 +1,36 @@
 const TelegramBot = require('node-telegram-bot-api');
 const request = require('request');
 const cheerio = require('cheerio');
+const Agent = require('socks5-https-client/lib/Agent');
 
-// token kept in token.js hidden by .gitignore
-// token.js should be like following:
-// module.exports = 'yourTelegramBotToken';
-const token = require('./token');
+// botData kept in botData.js hidden by .gitignore
+// botData.js should be like following:
+// module.exports = {
+//     token: 'yourTelegramBotToken',
+//     socksHost: '0.0.0.0',
+//     socksPort: 0000
+// };
+const botData = require('./botData');
+const {token, socksHost, socksPort} = botData;
 const bot = new TelegramBot(token, {
-    polling: {
-        params: {
-            interval: 2000
+    polling: true,
+    request: {
+        agentClass: Agent,
+        agentOptions: {
+            socksHost: socksHost,
+            socksPort: socksPort
         }
     }
 });
 
 bot.onText(/\/start/i, (msg, match) => {
     const opts = {
-    reply_markup: JSON.stringify({
-        keyboard: [
-            ['день'],
-            ['неделя'],
-            ['месяц']
-        ]
-    })
+        reply_markup: JSON.stringify({
+            keyboard: [
+                ['день', 'неделя', 'месяц']
+            ],
+            resize_keyboard: true
+        })
     };
     bot.sendMessage(
         msg.chat.id,
@@ -89,7 +97,7 @@ bot.onText(/день|неделя|месяц/i, (msg, match) => {
             const content = topic('.content').text().slice(0, 140) + '...';
             const link = `👍 ${likes}: <a href='smart-lab.ru${href}'>${label}</a>\n<i>(${author})</i>\n${content.trim()}\n\n`;
             message += link;
-        })
+        });
 
         bot.sendMessage(chatId, message, opts);
     });

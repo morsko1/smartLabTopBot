@@ -6,14 +6,15 @@
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
     "node-telegram-bot-api": "^0.30.0",
-    "request": "^2.85.0"
+    "request": "^2.85.0",
+    "socks5-https-client": "^1.2.1"
   },
   "devDependencies": {
     "nodemon": "^1.17.2"
   },
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "prod": "node index.js",
+    "start": "nodemon index.js"
   },
   "keywords": [],
   "author": "morsko1",
